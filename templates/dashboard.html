@@ -1,0 +1,51 @@
+    {% extends 'base_1.html' %}
+
+    {% block content %}
+        <div class="container-fluid pt-25 mainpagebox">
+          
+        </div>
+    {% endblock %}
+    
+    {% block script %}
+        <script>
+            var url = "http://"+$(location).attr('host')+"/Add-Product";
+            $('.mainpagebox').load(url);
+
+            $('a.list').click(function(e)
+            {   
+                $('.list').removeClass('active');
+                $(this).addClass('active');
+
+                var type = $(this).attr('type');
+                if(type=="ADD_DATA"){
+                    var url = "http://"+$(location).attr('host')+"/Add-Product";
+                    window.history.pushState("data","Title",url);
+                    $('.mainpagebox').load(url);
+                }else if(type=="VIEW_DATA"){
+                    var url = "http://"+$(location).attr('host')+"/View-Product";
+                    window.history.pushState("data","Title",url);
+                    $('.mainpagebox').load(url);
+                }
+                e.preventDefault();
+            });
+
+            
+            $("#addproduct").click(function(){
+               
+                $.ajax({
+                    url: "{% url 'add_product_api' %}",
+                    type: "post",
+                    data: '',
+                    success: function(data){
+                        var data = JSON.parse(data); 
+                        if(data.status=="success"){
+                            alert("success");
+                        }else{
+                            alert("failed");
+                        }
+                    }
+                });
+            });
+
+        </script>
+    {% endblock %}

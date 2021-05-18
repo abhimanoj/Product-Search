@@ -1,0 +1,141 @@
+<div class="row">
+    <!-- Bordered Table -->
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-heading"> 
+            <h6 class="panel-title txt-dark"><b>View Product</b></h6>  
+            </div>
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <div class="row mb-15">
+                    <div class="col-md-1">
+                       <div class="select-option">
+                           <select class="form-control">
+                               <option>10</option>
+                               <option>20</option>
+                               <option>50</option>
+                               <option>100</option>
+                           </select>
+                       </div>
+                    </div>
+                    <div class="col-md-8"></div>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search" id="searchinput" />
+                            <div class="input-group-addon searchbtn" style="cursor:pointer;" ><i class="fa fa-search"></i></div>
+                        </div>
+                    </div>
+                </div> 
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm mb-0 product_table">
+                                <thead>
+                                    <tr>
+                                        <th>Sr. No.</th>
+                                        <th>Product Name</th>
+                                        <th>Product Description</th>
+                                        <th style="width: 12%;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="productview_tablebody"></tbody>
+                            </table>
+                        </div>
+                        <div class="custom-pagination text-right mr-15">
+                            <ul class="pagination pagination-split">
+                                <li>
+                                    <a href="#"><i class="fa fa-angle-left"></i></a>
+                                </li>
+                                <li><a href="#">1</a></li>
+                                <li class="active"><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                                <li><a href="#">4</a></li>
+                                <li><a href="#">5</a></li>
+                                <li>
+                                    <a href="#"><i class="fa fa-angle-right"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Bordered Table -->
+</div>
+
+{% block script %}
+<script>
+    $('.searchbtn').click(function(){
+        var url = "http://"+$(location).attr('host')+"/Search-Product";
+        window.history.pushState("data","Title",url);
+        getandBindproduct();
+    }); 
+
+    $("#searchinput").keyup(function(){
+        var url = "http://"+$(location).attr('host')+"/Search-Product";
+        window.history.pushState("data","Title",url);
+        getandBindproduct();
+    });
+
+    getandBindproduct();
+
+    function getandBindproduct (){
+        var searchval = $.trim($('#searchinput').val());
+        $.ajax({
+            url: "{% url 'get_product_api' %}",
+            type: "post",
+            data: {
+                'search_term': searchval,
+            },
+            success: function(data) {
+                // console.log(data);
+                var list = [];
+                if(data.length>0){
+                    for(var d in data){
+                        list.push(data[d]['fields']);
+                    }
+                    if(searchval!=''){
+                        var list = $.map(list, function(obj, index){
+                            var match = obj.name.toUpperCase().indexOf(searchval.toUpperCase()) !== -1 || obj.description.toUpperCase().indexOf(searchval.toUpperCase()) !== -1;
+                            return match ? obj : null;
+                        });
+                    }
+                    
+
+                    $('.productview_tablebody').html('');
+                    for(var d in list){
+                        var html = bind_product_table_list(list[d]);
+                        $('.productview_tablebody').append(html);
+                    }
+
+                }
+        }});
+    }
+
+    function bind_product_table_list(data){
+        var rowCount = $(".product_table td").closest("tr").length;
+        rowCount = rowCount+1;
+        var htm = '';
+        htm += '<tr role="row">';
+            htm += '<td class="txt-dark">'
+                htm += rowCount+'. ';
+            htm += '</td>';
+
+            htm += '<td contenteditable="true" >';
+                htm += ' <span class="txt-dark weight-500" name="name">'+data.name+'</span>';
+            htm += '</td>';
+
+            htm += '<td contenteditable="true" >';
+                htm += ' <span class="txt-dark weight-500" name="name">'+data.description+'</span>';
+            htm += '</td>';
+
+            htm += '<td class="txt-dark">'
+                htm += data.status;
+            htm += '</td>';
+        htm += '</tr>';
+        return htm;
+    };
+
+</script>
+{% endblock %}
+

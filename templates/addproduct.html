@@ -1,0 +1,71 @@
+
+     <div class="row">
+         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                 <div class="panel panel-default card-view panel-refresh">
+                 <div class="panel-wrapper collapse in">
+                     <div  class="panel-body">
+                         <div class="form-wrap">
+                                     <form method="POST" class="addproductform" action="" enctype = "multipart/form-data" >
+                                         <div class="form-body">
+                                             <h6 class="txt-dark capitalize-font"><i class="zmdi zmdi-upload mr-10"></i>ADD PRODUCT</h6>
+                                             <hr class="light-grey-hr"/>
+                                             <div class="row">
+                                                 <div class="col-md-6">
+                                                     <div class="form-group">
+                                                         <label class="control-label mb-10">Product Name</label>
+                                                         <input type="text" class="form-control" name="product_name" id="product_name" placeholder="" />
+                                                     </div>
+                                                 </div>
+                                                 <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label mb-10">Product Description</label>
+                                                        <textarea type="text" class="form-control" name="product_desc"  id="product_desc" rows="3" cols="4"></textarea>
+                                                    </div>
+                                                </div>
+
+                                             </div>
+                                             <!-- /Row -->
+                                             
+                                             <!-- /Row -->
+                                             </div>
+                                         <div class="form-actions mt-10">
+                                             <button type="button" class="btn btn-success mr-10 editorganization" id="addproduct" > Save</button>
+                               
+                                         </div>
+                                     </form>
+                                 </div>
+                     </div>
+                 </div>
+             </div>
+          
+         </div>  
+     </div>
+
+
+
+
+     
+    {% block script %}
+        <script>
+            $('.editorganization').click(function(){
+                var product_name = $('#product_name').val();
+                var product_desc = $('#product_desc').val(); 
+        
+                $.ajax({
+                url: "{% url 'add_product_api' %}",
+                type: "post",
+                data: {
+                    'product_name': product_name,
+                    'product_desc':product_desc
+                },
+                success: function(data) {
+                
+                    alert("Product added successfully");
+                    
+                $('#product_name').val("");
+                $('#product_desc').val(""); 
+                }});
+            });  
+        </script>
+    {% endblock %}
+
