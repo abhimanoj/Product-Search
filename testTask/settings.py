@@ -94,6 +94,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'testTask.wsgi.application'
 
+AUTHENTICATION_BACKENDS = [
+    "django_auth_ldap.backend.LDAPBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+AUTH_LDAP_SERVER_URI = "ldap://ldap.forumsys.com:389"
+AUTH_LDAP_BIND_DN = "cn=admin,dc=example,dc=com"
+AUTH_LDAP_BIND_PASSWORD = "test@1234"
+
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases

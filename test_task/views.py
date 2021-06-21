@@ -18,6 +18,29 @@ from django.http import JsonResponse
 from django.core import serializers
 from django.core.serializers import serialize
 
+from django.contrib.auth import authenticate, login, logout
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+class LDAPLogin(APIView):
+    """
+    Class to authenticate a user via LDAP and
+    then creating a login session
+    """
+    authentication_classes = ()
+
+    def post(self, request):
+        """
+        Api to login a user
+        :param request:
+        :return:
+        """
+        user_obj = authenticate(username=request.data['username'],
+                                password=request.data['password'])
+        login(request, user_obj)
+        data={'detail': 'User logged in successfully'}
+        return Response(data, status=200)
+        
    
 def dashboard(request):
     return render(request, 'dashboard.html')
@@ -32,8 +55,7 @@ def viewproduct(request):
     return render(request, 'viewproduct.html',{'number':result})
 
 @csrf_exempt
-def add_product_api(request):
-    print('fdsfsdfsd')
+def add_product_api(request): 
     
     product_name = request.POST['product_name']
     product_desc = request.POST['product_desc']
