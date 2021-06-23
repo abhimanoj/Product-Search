@@ -1,1 +1,3 @@
-# ProductSearch
+### ProductSearch
+
+LDAP auth integration
