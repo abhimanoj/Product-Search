@@ -22,6 +22,7 @@ from django.contrib.auth import authenticate, login, logout
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 class LDAPLogin(APIView):
     """
     Class to authenticate a user via LDAP and
@@ -40,9 +41,34 @@ class LDAPLogin(APIView):
         login(request, user_obj)
         data={'detail': 'User logged in successfully'}
         return Response(data, status=200)
-        
+
+class LDAPLogout(APIView):
+    """
+    Class for logging out a user by clearing his/her session
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        """
+        Api to logout a user
+        :param request:
+        :return:
+        """
+        logout(request)
+        data={'detail': 'User logged out successfully'}
+        return Response(data, status=200)
    
+import ldap
+from django_auth_ldap.config import LDAPSearch
+
 def dashboard(request):
+
+    AUTH_LDAP_USER_SEARCH = LDAPSearch("OU=users,DC=example,DC=com",
+                                   ldap.SCOPE_SUBTREE,
+                                   "(uid=%  (user)s)")
+
+    print(AUTH_LDAP_USER_SEARCH)
+
     return render(request, 'dashboard.html')
 
 def addproduct(request):

@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 """
 
 import os 
+import ldap
+from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -99,9 +101,32 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 ]
 
-AUTH_LDAP_SERVER_URI = "ldap://ldap.forumsys.com:389"
-AUTH_LDAP_BIND_DN = "cn=admin,dc=example,dc=com"
-AUTH_LDAP_BIND_PASSWORD = "test@1234"
+LDAP_SERVER = 'ldap.forumsys.com:389'
+AUTH_LDAP_SERVER_URI = 'ldap://' + LDAP_SERVER
+AUTH_LDAP_BIND_DN = 'cn=read-only-admin,dc=example,dc=com'
+AUTH_LDAP_BIND_PASSWORD = "password"
+ 
+
+#  TESTING
+AUTH_LDAP_ALWAYS_UPDATE_USER = True
+
+# /!\ Note the filterstr on sAMAccountName this won't work otherwise /!\
+AUTH_LDAP_USER_SEARCH = LDAPSearchUnion(
+    LDAPSearch("OU=UTILISATEURS EGIS,DC=egis,dc=racine,dc=local",
+               ldap.SCOPE_SUBTREE,
+               filterstr='(sAMAccountName=%(user)s)'
+               ),
+    LDAPSearch("OU=UTILISATEURS EXTERNES,DC=egis,dc=racine,dc=local",
+               ldap.SCOPE_SUBTREE,
+               filterstr='(sAMAccountName=%(user)s)'
+               ),
+)
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+}
 
 
 # Database

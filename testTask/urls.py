@@ -16,7 +16,7 @@ urlpatterns =[
     path('add_product_api',views.add_product_api, name='add_product_api'),
     path('get_product_api',views.get_product_api, name='get_product_api'),
     path('search_product_api',views.search_product_api, name='search_product_api'),
-
+# LDAPLogin
     path('admin/', admin.site.urls),
   
 ]
